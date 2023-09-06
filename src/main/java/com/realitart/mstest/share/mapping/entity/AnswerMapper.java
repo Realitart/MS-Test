@@ -4,6 +4,7 @@ package com.realitart.mstest.share.mapping.entity;
 
 import com.realitart.mstest.Domain.Answer;
 import com.realitart.mstest.Dtos.getAnswerDTO;
+import com.realitart.mstest.Dtos.setAnswerDTO;
 import com.realitart.mstest.share.mapping.configuration.EnhancedModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,7 @@ public class AnswerMapper {
         return Collections.singletonList(mapper.map(modelList, getAnswerDTO.class));
     }
 
-    public Answer dtoToModel(getAnswerDTO dto) {
+    public Answer dtoToModel(setAnswerDTO dto) {
         return mapper.map(dto, Answer.class);
     }
 

@@ -1,5 +1,6 @@
 package com.realitart.mstest.Service.Impl;
 
+import com.realitart.mstest.Domain.Answer;
 import com.realitart.mstest.Domain.Question;
 import com.realitart.mstest.Domain.Repositories.*;
 import com.realitart.mstest.Domain.Test;
@@ -7,6 +8,7 @@ import com.realitart.mstest.Domain.UserTest;
 import com.realitart.mstest.Dtos.QuestionAndAnswerDTO;
 import com.realitart.mstest.Dtos.getAnswerDTO;
 import com.realitart.mstest.Dtos.completeTestDTO;
+import com.realitart.mstest.Dtos.sendTestDTO;
 import com.realitart.mstest.Service.ITestService;
 import com.realitart.mstest.share.exceptions.ResourceNotFoundException;
 import com.realitart.mstest.share.mapping.entity.AnswerMapper;
@@ -83,9 +85,9 @@ public class TestServiceImpl implements ITestService {
     @Override
     public completeTestDTO checkTestByUser(Long userId , Long TestId) {
         try {
-            List<Question> questions = _QuestionRepo.findAllByTestId(TestId);
             Test test = _TestRepo.findById(TestId).orElseThrow(() -> new ResourceNotFoundException(ENTITY, TestId));
             completeTestDTO testDTO = new completeTestDTO();
+            List<Question> questions = _QuestionRepo.findAllByTestId(test);
 
             testDTO.setId(test.getId());
             testDTO.setCode(test.getCode());
@@ -100,13 +102,13 @@ public class TestServiceImpl implements ITestService {
                         questionAndAnswerDTO.setStatement(question.getStatement());
                         questionAndAnswerDTO.setPoints(question.getPoints());
                         questionAndAnswerDTO.setAnswers(
-                                _AnswerRepo.findByQuestionId(question.getId()).stream().map(answer -> {
+                                _AnswerRepo.findByQuestionId(question).stream().map(answer -> {
                                     getAnswerDTO answerDTO = new getAnswerDTO();
 
                                     answerDTO.setAnswer(answer.getAnswer());
                                     answerDTO.setIsCorrect(answer.getIsCorrect());
                                     answerDTO.setId(answer.getId());
-                                    answerDTO.setIsChosen(_UserTestRepo.existsByAnswerIdAndUserId(answer.getId(),userId));
+                                    answerDTO.setIsChosen(_UserTestRepo.existsByAnswerIdAndUserId(answer,userId));
 
                                     return answerDTO;
                                 }).toList()
@@ -125,13 +127,15 @@ public class TestServiceImpl implements ITestService {
 
 
     @Override
-    public completeTestDTO getCompleteTestByCode(Integer code) {
+    public completeTestDTO getTestByCode(Integer code) {
         try {
             Test test = _TestRepo.findByCode(code);
             boolean isAvailable = test.getStart().isBefore(LocalDateTime.now()) && test.getExpiration().isAfter(LocalDateTime.now());
-            if (!isAvailable) throw new ResourceNotFoundException("El test no está disponible. Inicia el " + test.getStart() + " y termina el " + test.getExpiration() + ".");
-
+            if (!isAvailable) {
+                throw new ResourceNotFoundException("El test no está disponible. Inicia el " + test.getStart() + " y termina el " + test.getExpiration() + ".");
+            }
             completeTestDTO testDTO = new completeTestDTO();
+
 
             testDTO.setId(test.getId());
             testDTO.setCode(test.getCode());
@@ -141,12 +145,12 @@ public class TestServiceImpl implements ITestService {
             testDTO.setStart(test.getStart());
 
             testDTO.setQuestionsAnsAnswers(
-                    _QuestionRepo.findAllByTestId(test.getId()).stream().map(question -> {
+                    _QuestionRepo.findAllByTestId(test).stream().map(question -> {
                         QuestionAndAnswerDTO questionAndAnswerDTO = new QuestionAndAnswerDTO();
                         questionAndAnswerDTO.setStatement(question.getStatement());
                         questionAndAnswerDTO.setPoints(question.getPoints());
                         questionAndAnswerDTO.setAnswers(
-                                _AnswerRepo.findByQuestionId(question.getId()).stream().map(answer -> {
+                                _AnswerRepo.findByQuestionId(question).stream().map(answer -> {
                                     getAnswerDTO answerDTO = new getAnswerDTO();
 
                                     answerDTO.setAnswer(answer.getAnswer());
@@ -180,12 +184,12 @@ public class TestServiceImpl implements ITestService {
             testDTO.setStart(test.getStart());
 
             testDTO.setQuestionsAnsAnswers(
-                    _QuestionRepo.findAllByTestId(test.getId()).stream().map(question -> {
+                    _QuestionRepo.findAllByTestId(test).stream().map(question -> {
                         QuestionAndAnswerDTO questionAndAnswerDTO = new QuestionAndAnswerDTO();
                         questionAndAnswerDTO.setStatement(question.getStatement());
                         questionAndAnswerDTO.setPoints(question.getPoints());
                         questionAndAnswerDTO.setAnswers(
-                                _AnswerRepo.findByQuestionId(question.getId()).stream().map(answer -> {
+                                _AnswerRepo.findByQuestionId(question).stream().map(answer -> {
                                     getAnswerDTO answerDTO = new getAnswerDTO();
 
                                     answerDTO.setAnswer(answer.getAnswer());
@@ -206,25 +210,23 @@ public class TestServiceImpl implements ITestService {
     }
 
     @Override
-    public OperationResponse sendTest(completeTestDTO request,Long TestId, Long userId) {
+    public OperationResponse sendTest(sendTestDTO request, Long userId) {
         try {
-            Test test = _TestRepo.findById(TestId).orElseThrow(() -> new ResourceNotFoundException(ENTITY, TestId));
+            Test test = _TestRepo.findById(request.getId()).orElseThrow(() -> new ResourceNotFoundException(ENTITY, request.getId()));
             if (test.getExpiration().isBefore(LocalDateTime.now())) throw new ResourceNotFoundException("El test ya expiró.");
 
 
             request.getQuestionsAnsAnswers().forEach(questionAndAnswer -> {
-                questionAndAnswer.getAnswers().stream().filter(getAnswerDTO::getIsChosen).forEach(answer -> {
-                    UserTest userTest = new UserTest();
-                    userTest.setTestId(TestId);
-                    userTest.setUserId(userId);
-                    userTest.setAnswerId(answer.getId());
-                    userTest.setScore(
-                            questionAndAnswer.getAnswers().stream().anyMatch(e->
-                                    e.getIsCorrect() && e.getIsChosen())
-                                    ? questionAndAnswer.getPoints() : 0
-                    );
-                    _UserTestRepo.save(userTest);
-                });
+                Question question = _QuestionRepo.findById(questionAndAnswer.getQuestionId()).orElseThrow(() -> new ResourceNotFoundException("Question", questionAndAnswer.getQuestionId()));
+                Answer answer =  _AnswerRepo.findById(questionAndAnswer.getAnswerId()).orElseThrow(() -> new ResourceNotFoundException("Answer", questionAndAnswer.getAnswerId()));
+                UserTest userTest = new UserTest();
+                userTest.setTestId(test);
+                userTest.setUserId(userId);
+                userTest.setAnswerId(answer);
+                userTest.setScore(
+                        answer.getIsCorrect()? question.getPoints() : 0
+                );
+                _UserTestRepo.save(userTest);
                 });
 
             return new OperationResponse(true, "Test enviado correctamente");

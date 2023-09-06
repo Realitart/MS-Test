@@ -7,7 +7,5 @@ import java.util.List;
 
 public interface ITestRepository extends JpaRepository<Test, Long> {
     List<Test> findAllByProfessorId(Long professorId);
-    List<Test> findAllByUserId(Long userId);
-
     Test findByCode(Integer code);
 }

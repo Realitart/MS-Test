@@ -29,4 +29,7 @@ public class QuestionMapper {
         return Collections.singletonList(mapper.map(modelList, QuestionDTO.class));
     }
 
+    public Question dtoToModel(QuestionDTO request) {
+        return mapper.map(request, Question.class);
+    }
 }

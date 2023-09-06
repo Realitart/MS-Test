@@ -2,6 +2,7 @@ package com.realitart.mstest.Service;
 
 import com.realitart.mstest.Domain.Test;
 import com.realitart.mstest.Dtos.completeTestDTO;
+import com.realitart.mstest.Dtos.sendTestDTO;
 import com.realitart.mstest.share.response.OperationResponse;
 
 import java.util.List;
@@ -17,10 +18,10 @@ public interface ITestService {
 
     completeTestDTO checkTestByUser(Long userId, Long TestId);
 
-    completeTestDTO getCompleteTestByCode(Integer code);
+    completeTestDTO getTestByCode(Integer code);
     completeTestDTO getCompleteTest(Long TestId);
 
-    OperationResponse sendTest(completeTestDTO test,Long TestId, Long userId);
+    OperationResponse sendTest(sendTestDTO test, Long userId);
 
     List<Test> getTests();
     List<Test> getAllTestsByProfessorId(Long professorId);

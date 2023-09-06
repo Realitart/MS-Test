@@ -3,6 +3,7 @@ package com.realitart.mstest.share.mapping.configuration;
 
 import com.realitart.mstest.share.mapping.entity.AnswerMapper;
 import com.realitart.mstest.share.mapping.entity.QuestionMapper;
+import com.realitart.mstest.share.mapping.entity.TestMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,6 +21,10 @@ public class MappingConfiguration {
     @Bean
     public AnswerMapper AnswerMapper() {
         return new AnswerMapper();
+    }
+    @Bean
+    public TestMapper TestMapper() {
+        return new TestMapper();
     }
 //    @Bean
 //    public AssetMapper UserMapper() {

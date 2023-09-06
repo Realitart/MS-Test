@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -18,8 +20,11 @@ import java.time.LocalDateTime;
 public class Question extends AuditModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Long id;
-    private Long testId;
+    @ManyToOne
+    @JoinColumn(name = "TEST_ID", nullable=false)
+    private Test testId;
     private String statement;
     private Integer points;
 }

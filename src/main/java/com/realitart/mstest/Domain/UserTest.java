@@ -18,7 +18,11 @@ public class UserTest extends AuditModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long userId;
-    private Long TestId;
-    private Long answerId;
+    @ManyToOne
+    @JoinColumn(name = "TEST_ID", nullable=false)
+    private Test TestId;
+    @ManyToOne
+    @JoinColumn(name = "ANSWER_ID", nullable=false)
+    private Answer answerId;
     private Integer score;
 }

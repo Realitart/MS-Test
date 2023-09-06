@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class setAnswerDTO {
-    private long questionId;
-    private String answer;
-    private Boolean isCorrect;
+public class testUserScoreDto {
+    private String usName;
+    private String usUsername;
+    private Integer score;
 }
