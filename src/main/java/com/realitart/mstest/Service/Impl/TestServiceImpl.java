@@ -41,6 +41,7 @@ public class TestServiceImpl implements ITestService {
     @Override
     public OperationResponse createTest(Test request) {
         try{
+            request.setId(null);
             _TestRepo.save(request);
             return new OperationResponse(true, "Test creado correctamente");
         }catch (Exception e){

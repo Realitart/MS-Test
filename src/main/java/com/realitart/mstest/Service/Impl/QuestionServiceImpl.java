@@ -20,6 +20,7 @@ public class QuestionServiceImpl implements IQuestionService {
     @Override
     public OperationResponse createQuestion(Question request) {
         try{
+            request.setId(null);
             _QuestionRepo.save(request);
             return new OperationResponse(true, "Question creado correctamente");
         }catch (Exception e){

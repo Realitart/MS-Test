@@ -20,6 +20,7 @@ public class AnswerServiceImpl implements IAnswerService {
     @Override
     public OperationResponse createAnswer(Answer request) {
         try{
+            request.setId(null);
             _answerRepo.save(request);
             return new OperationResponse(true, "Answer creado correctamente");
         }catch (Exception e){
