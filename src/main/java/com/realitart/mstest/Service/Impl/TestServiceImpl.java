@@ -148,6 +148,7 @@ public class TestServiceImpl implements ITestService {
             testDTO.setQuestionsAnsAnswers(
                     _QuestionRepo.findAllByTestId(test).stream().map(question -> {
                         QuestionAndAnswerDTO questionAndAnswerDTO = new QuestionAndAnswerDTO();
+                        questionAndAnswerDTO.setAnswerId(question.getId());
                         questionAndAnswerDTO.setStatement(question.getStatement());
                         questionAndAnswerDTO.setPoints(question.getPoints());
                         questionAndAnswerDTO.setAnswers(
@@ -187,6 +188,7 @@ public class TestServiceImpl implements ITestService {
             testDTO.setQuestionsAnsAnswers(
                     _QuestionRepo.findAllByTestId(test).stream().map(question -> {
                         QuestionAndAnswerDTO questionAndAnswerDTO = new QuestionAndAnswerDTO();
+                        questionAndAnswerDTO.setAnswerId(question.getId());
                         questionAndAnswerDTO.setStatement(question.getStatement());
                         questionAndAnswerDTO.setPoints(question.getPoints());
                         questionAndAnswerDTO.setAnswers(

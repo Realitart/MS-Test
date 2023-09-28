@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionAndAnswerDTO {
+    private Long AnswerId;
     private String statement;
     private Integer points;
     List<getAnswerDTO> answers;
