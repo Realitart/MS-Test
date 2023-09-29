@@ -2,6 +2,7 @@ package com.realitart.mstest.Controller;
 
 
 import com.realitart.mstest.Domain.Test;
+import com.realitart.mstest.Dtos.IFullTest;
 import com.realitart.mstest.Dtos.completeTestDTO;
 import com.realitart.mstest.Dtos.sendTestDTO;
 import com.realitart.mstest.Service.ITestService;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/test")
@@ -79,6 +82,12 @@ public class TestController {
         } else {
             return ResponseEntity.ok(mapper.modelListToPage(testService.getAllTestsByProfessorId(professorId),pageable));
         }
+    }
+
+    @GetMapping("/all/student")
+    @Operation(summary = "Get all tests by student")
+    List<IFullTest> getAllTestsByStudentId(@RequestParam Long studentId){
+        return testService.getAllTestsByStudentId(studentId);
     }
 
 

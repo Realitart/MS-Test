@@ -5,10 +5,7 @@ import com.realitart.mstest.Domain.Question;
 import com.realitart.mstest.Domain.Repositories.*;
 import com.realitart.mstest.Domain.Test;
 import com.realitart.mstest.Domain.UserTest;
-import com.realitart.mstest.Dtos.QuestionAndAnswerDTO;
-import com.realitart.mstest.Dtos.getAnswerDTO;
-import com.realitart.mstest.Dtos.completeTestDTO;
-import com.realitart.mstest.Dtos.sendTestDTO;
+import com.realitart.mstest.Dtos.*;
 import com.realitart.mstest.Service.ITestService;
 import com.realitart.mstest.share.exceptions.ResourceNotFoundException;
 import com.realitart.mstest.share.mapping.entity.AnswerMapper;
@@ -257,7 +254,15 @@ public class TestServiceImpl implements ITestService {
         }
     }
 
-
+    @Override
+    public List<IFullTest> getAllTestsByStudentId(Long studentId) {
+        try{
+            var response = _TestRepo.findAllByStudentId(studentId);
+            return response;
+        }catch (Exception e){
+            throw new ResourceNotFoundException("Error al obtener los Tests", e);
+        }
+    }
 
 
 }

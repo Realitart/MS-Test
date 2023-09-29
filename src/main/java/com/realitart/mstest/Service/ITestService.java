@@ -1,6 +1,7 @@
 package com.realitart.mstest.Service;
 
 import com.realitart.mstest.Domain.Test;
+import com.realitart.mstest.Dtos.IFullTest;
 import com.realitart.mstest.Dtos.completeTestDTO;
 import com.realitart.mstest.Dtos.sendTestDTO;
 import com.realitart.mstest.share.response.OperationResponse;
@@ -25,5 +26,6 @@ public interface ITestService {
 
     List<Test> getTests();
     List<Test> getAllTestsByProfessorId(Long professorId);
+    List<IFullTest> getAllTestsByStudentId(Long studentId);
 
 }
